@@ -43,13 +43,20 @@ BACKTEST_KEYS = {"start_origin", "n_origins", "horizon", "step", "min_history",
 def load_config(path: str) -> dict:
     with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
+    cfg.setdefault("name", path)
+    return prepare_config(cfg)
+
+
+def prepare_config(cfg: dict) -> dict:
+    """Fill defaults and resolve the runs of a config dict (from YAML or the web app)."""
+    cfg = copy.deepcopy(cfg)
     for key in ("data", "model", "backtest"):
         if key not in cfg:
             raise ValueError(f"config ขาดหัวข้อ {key}")
-    cfg.setdefault("name", path)
+    cfg.setdefault("name", "experiment")
     cfg.setdefault("seed", 42)
     cfg.setdefault("output_dir", f"outputs/{cfg['name']}")
-    cfg.setdefault("drug_filter", {})
+    cfg["drug_filter"] = cfg.get("drug_filter") or {}
     cfg["model"].setdefault("params", {})
     cfg["runs"] = expand_runs(cfg)
     return cfg
