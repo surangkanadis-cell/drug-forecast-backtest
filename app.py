@@ -127,12 +127,12 @@ def list_outputs() -> list[Path]:
 
 
 # ----------------------------------------------------------------- tab 1: data
-ON_SPACE = bool(os.environ.get("SPACE_ID"))
+ON_SPACE = bool(os.environ.get("SPACE_ID")) or str(ROOT).startswith("/mount/src")  # HF Space / Streamlit Cloud
 
 
 def tab_data():
     if ON_SPACE:
-        st.info("แอปนี้รันบน Hugging Face: ไฟล์ที่อัปโหลดและผลลัพธ์จะหายเมื่อ Space รีสตาร์ทหรือหลับ "
+        st.info("แอปนี้รันบนคลาวด์: ไฟล์ที่อัปโหลดและผลลัพธ์จะหายเมื่อแอปรีสตาร์ทหรือหลับ "
                 "ดาวน์โหลดผลเก็บไว้ทุกครั้งหลังรันเสร็จ")
     st.markdown("#### สถานะไฟล์ข้อมูล")
     cols = st.columns(4)

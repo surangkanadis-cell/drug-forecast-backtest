@@ -1,9 +1,16 @@
-chronos-forecasting>=2.3,<2.4
-torch>=2.2            # CPU build is enough
-pandas>=2.1
-numpy>=1.26
-pyyaml>=6.0
+# Used both locally and on Streamlit Community Cloud (Python 3.12, CPU).
+# Pinned to the versions the results were produced with.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0+cpu
+chronos-forecasting==2.3.2
+transformers==5.17.0
+accelerate==1.15.0
+huggingface_hub==1.32.0
+safetensors==0.8.0
+numpy==2.5.3
+pandas==2.2.3
+PyYAML==6.0.3
+streamlit==1.67.0
+plotly==7.1.0
+openpyxl==3.1.5
 pytest>=8.0
-streamlit>=1.40       # web app
-plotly>=5.19
-openpyxl>=3.1         # Excel upload/download

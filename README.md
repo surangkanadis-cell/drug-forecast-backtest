@@ -1,24 +1,13 @@
----
-title: Drug Forecast Backtest
-emoji: 💊
-colorFrom: blue
-colorTo: blue
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # พยากรณ์ความต้องการใช้ยารายเดือน: Chronos-2 แบบ zero-shot (rolling origin)
 
 พยากรณ์ปริมาณการใช้ยารายเดือนด้วย `amazon/chronos-2` โดยไม่ fine-tune และรันบน CPU
 แล้วประเมินผลด้วยการทดสอบแบบ rolling origin (expanding window)
 
-## ติดตั้ง (Python 3.11, CPU)
+## ติดตั้ง (Python 3.12, CPU)
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate                # Windows  (Linux/mac: source .venv/bin/activate)
-pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 ครั้งแรกที่รัน โปรแกรมจะดาวน์โหลดโมเดลจาก Hugging Face (ประมาณ 480 MB) แล้วเก็บไว้ใช้ครั้งต่อไป
@@ -38,10 +27,15 @@ streamlit run app.py
 
 ข้อมูลอยู่ในเครื่องนี้เท่านั้น ไม่ถูกส่งออกไปภายนอก (ใช้อินเทอร์เน็ตแค่ตอนดาวน์โหลดโมเดลครั้งแรก)
 
-## ขึ้นเว็บด้วย Hugging Face Space
+## ขึ้นเว็บด้วย Streamlit Community Cloud (ฟรี)
 
-ไฟล์ `Dockerfile` และ `requirements-space.txt` ใช้สำหรับ Space แบบ Docker (Python 3.12, CPU)
-ไฟล์ที่อัปโหลดและผลลัพธ์บน Space จะหายเมื่อ Space รีสตาร์ท ให้ดาวน์โหลดผลเก็บไว้ทุกครั้ง
+1. เข้า https://share.streamlit.io แล้วล็อกอินด้วยบัญชี GitHub ที่เป็นเจ้าของ repo นี้
+2. Create app → Deploy a public app from GitHub → เลือก repo นี้, branch `main`, ไฟล์ `app.py`
+3. Advanced settings → Python version **3.12** → Deploy
+4. ตั้งให้เฉพาะคนที่เชิญดูได้: ในหน้าแอป Settings → Sharing
+
+ไฟล์ที่อัปโหลดและผลลัพธ์บนคลาวด์จะหายเมื่อแอปรีสตาร์ทหรือหลับ ให้ดาวน์โหลดผลเก็บไว้ทุกครั้ง
+(`Dockerfile` มีไว้ถ้าจะรันบนเซิร์ฟเวอร์ที่ใช้ Docker)
 
 ## ไฟล์ข้อมูลใน `data/`
 

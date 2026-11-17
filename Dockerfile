@@ -10,8 +10,8 @@ ENV HOME=/home/user \
     PYTHONUNBUFFERED=1
 WORKDIR /home/user/app
 
-COPY --chown=user requirements-space.txt .
-RUN pip install --no-cache-dir --user -r requirements-space.txt
+COPY --chown=user requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
 
 # Download the model at build time so the app starts fast
 RUN python -c "from huggingface_hub import snapshot_download; snapshot_download('amazon/chronos-2')"
