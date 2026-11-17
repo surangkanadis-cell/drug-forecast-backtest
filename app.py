@@ -127,7 +127,13 @@ def list_outputs() -> list[Path]:
 
 
 # ----------------------------------------------------------------- tab 1: data
+ON_SPACE = bool(os.environ.get("SPACE_ID"))
+
+
 def tab_data():
+    if ON_SPACE:
+        st.info("แอปนี้รันบน Hugging Face: ไฟล์ที่อัปโหลดและผลลัพธ์จะหายเมื่อ Space รีสตาร์ทหรือหลับ "
+                "ดาวน์โหลดผลเก็บไว้ทุกครั้งหลังรันเสร็จ")
     st.markdown("#### สถานะไฟล์ข้อมูล")
     cols = st.columns(4)
     for col, (label, path) in zip(cols, [("ข้อมูลการใช้ยา", DRUGS_FILE), ("รายชื่อยาใหม่", NEW_DRUGS_FILE),
@@ -540,7 +546,8 @@ def excel_bytes(folder: Path) -> bytes:
 
 # ----------------------------------------------------------------- page
 st.markdown("### พยากรณ์ความต้องการใช้ยารายเดือน")
-st.caption("Chronos-2 (amazon/chronos-2) แบบ zero-shot · ทดสอบแบบ rolling origin · รันบนเครื่องนี้ ข้อมูลไม่ถูกส่งออกไปภายนอก")
+st.caption("Chronos-2 (amazon/chronos-2) แบบ zero-shot · ทดสอบแบบ rolling origin"
+           + ("" if ON_SPACE else " · รันบนเครื่องนี้ ข้อมูลไม่ถูกส่งออกไปภายนอก"))
 t1, t2, t3 = st.tabs(["ข้อมูล", "รันการทดลอง", "ผลลัพธ์"])
 with t1:
     tab_data()

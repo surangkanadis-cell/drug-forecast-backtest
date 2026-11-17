@@ -1,3 +1,13 @@
+---
+title: Drug Forecast Backtest
+emoji: 💊
+colorFrom: blue
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # พยากรณ์ความต้องการใช้ยารายเดือน: Chronos-2 แบบ zero-shot (rolling origin)
 
 พยากรณ์ปริมาณการใช้ยารายเดือนด้วย `amazon/chronos-2` โดยไม่ fine-tune และรันบน CPU
@@ -27,6 +37,11 @@ streamlit run app.py
    และปุ่มดาวน์โหลด CSV/Excel
 
 ข้อมูลอยู่ในเครื่องนี้เท่านั้น ไม่ถูกส่งออกไปภายนอก (ใช้อินเทอร์เน็ตแค่ตอนดาวน์โหลดโมเดลครั้งแรก)
+
+## ขึ้นเว็บด้วย Hugging Face Space
+
+ไฟล์ `Dockerfile` และ `requirements-space.txt` ใช้สำหรับ Space แบบ Docker (Python 3.12, CPU)
+ไฟล์ที่อัปโหลดและผลลัพธ์บน Space จะหายเมื่อ Space รีสตาร์ท ให้ดาวน์โหลดผลเก็บไว้ทุกครั้ง
 
 ## ไฟล์ข้อมูลใน `data/`
 
