@@ -1,0 +1,12 @@
+# Covariate type for each column: past_only or known_future
+#   past_only    : used only for months before the origin
+#   known_future : the target month's value may be used
+file: data/covariates.csv            # month + covariate columns (month may be B.E.)
+holidays_file: data/holidays.csv     # date, announced_date, name  -> derives n_holidays, working_days
+columns:
+  month_of_year: known_future        # computed automatically (1-12) if not in the file
+  working_days: known_future         # derived from holidays_file (holidays announced before the origin only)
+  n_holidays: known_future           # derived from holidays_file (holidays announced before the origin only)
+  opd: past_only
+  ipd: past_only
+  temperature: past_only

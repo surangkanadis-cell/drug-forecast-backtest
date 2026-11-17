@@ -1,0 +1,22 @@
+# Smoke test on synthetic data (examples/make_example_data.py). Not for the thesis.
+name: smoke
+seed: 42
+output_dir: outputs/smoke
+data:
+  drug_file: examples/data/drugs.csv
+  covariate_config: examples/covariates.yaml
+drug_filter:
+  first_obs_by: 2020-10
+model:
+  name: chronos2
+  params: {model_id: amazon/chronos-2, device: cpu, torch_dtype: float32}
+backtest:
+  start_origin: 2025-10
+  n_origins: 3
+  horizon: 1
+  step: 1
+  min_history: 13
+  use_covariates: [false, true]
+runs:
+  - {context: 1, context_start: 2024-10, min_history: 12}
+  - {context: 5, context_start: 2020-10}

@@ -1,0 +1,28 @@
+# Experiment 2: history length (1, 3, 5 years) for drugs with a full 5 years of data
+name: exp2_context_length
+seed: 42
+output_dir: outputs/exp2_context_length
+data:
+  drug_file: data/drugs.csv
+  covariate_config: configs/covariates.yaml
+drug_filter:
+  first_obs_by: 2020-10        # same drug set in every run: first observed on or before 2020-10
+model:
+  name: chronos2
+  params:
+    model_id: amazon/chronos-2
+    device: cpu
+    torch_dtype: float32
+    batch_size: 256
+    cross_learning: false
+backtest:
+  start_origin: 2025-10
+  n_origins: 12
+  horizon: 1
+  step: 1
+  min_history: 13
+  use_covariates: [false, true]
+runs:
+  - {context: 1, context_start: 2024-10, min_history: 12}
+  - {context: 3, context_start: 2022-10}
+  - {context: 5, context_start: 2020-10}

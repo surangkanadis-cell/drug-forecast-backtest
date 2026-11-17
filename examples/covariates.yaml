@@ -1,0 +1,9 @@
+file: examples/data/covariates.csv
+holidays_file: examples/data/holidays.csv
+columns:
+  month_of_year: known_future
+  working_days: known_future
+  n_holidays: known_future
+  opd: past_only
+  ipd: past_only
+  temperature: past_only

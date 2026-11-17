@@ -1,0 +1,27 @@
+# Experiment 3: 30 new drugs
+name: exp3_new_drugs
+seed: 42
+output_dir: outputs/exp3_new_drugs
+data:
+  drug_file: data/drugs.csv
+  covariate_config: configs/covariates.yaml
+drug_filter:
+  ids_file: data/new_drugs.csv   # drug_id column (or one id per line), 30 drugs
+model:
+  name: chronos2
+  params:
+    model_id: amazon/chronos-2
+    device: cpu
+    torch_dtype: float32
+    batch_size: 256
+    cross_learning: false
+backtest:
+  start_origin: 2026-11
+  n_origins: 5
+  horizon: 1
+  step: 1
+  min_history: 1
+  context_start: null
+  use_covariates: [false, true]
+runs:
+  - {context: all}

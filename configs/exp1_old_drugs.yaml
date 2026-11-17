@@ -1,0 +1,25 @@
+# Experiment 1: existing drugs, all available data, with and without covariates
+name: exp1_old_drugs
+seed: 42
+output_dir: outputs/exp1_old_drugs
+data:
+  drug_file: data/drugs.csv
+  covariate_config: configs/covariates.yaml
+model:
+  name: chronos2
+  params:
+    model_id: amazon/chronos-2
+    device: cpu
+    torch_dtype: float32
+    batch_size: 256
+    cross_learning: false
+backtest:
+  start_origin: 2025-10
+  n_origins: 12
+  horizon: 1
+  step: 1
+  min_history: 13
+  context_start: null          # use all data
+  use_covariates: [false, true]
+runs:
+  - {context: all}
