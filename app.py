@@ -36,9 +36,10 @@ NEW_DRUGS_FILE = DATA / "new_drugs.csv"
 COV_CONFIG = CONFIGS / "covariates.yaml"
 
 # Series colors (validated categorical slots 1-2); actual values in neutral ink.
-COLOR = {"no_cov": "#2a78d6", "with_cov": "#eb6834"}
-BAND = {"no_cov": "rgba(42,120,214,0.16)", "with_cov": "rgba(235,104,52,0.16)"}
-INK = "#7a7974"
+COLOR = {"no_cov": "#2a78d6", "with_cov": "#1baf7a"}
+BAND = {"no_cov": "rgba(42,120,214,0.14)", "with_cov": "rgba(27,175,122,0.14)"}
+INK = "#6b7a8c"
+GRID = "rgba(29,43,58,0.08)"
 COV_TH = {"no_cov": "ไม่มีตัวแปรร่วม", "with_cov": "มีตัวแปรร่วม"}
 METRIC_TH = {
     "mae_mean": "MAE",
@@ -55,7 +56,7 @@ PRESETS = {
     "การทดลอง 3: ยาใหม่": "exp3_new_drugs.yaml",
 }
 
-st.set_page_config(page_title="พยากรณ์การใช้ยา Chronos-2", page_icon="💊", layout="wide")
+st.set_page_config(page_title="พยากรณ์การใช้ยา", page_icon=":material/medication:", layout="wide")
 
 
 # ----------------------------------------------------------------- helpers
@@ -127,7 +128,7 @@ def list_outputs() -> list[Path]:
 
 # ----------------------------------------------------------------- tab 1: data
 def tab_data():
-    st.subheader("สถานะไฟล์ข้อมูล")
+    st.markdown("#### สถานะไฟล์ข้อมูล")
     cols = st.columns(4)
     for col, (label, path) in zip(cols, [("ข้อมูลการใช้ยา", DRUGS_FILE), ("รายชื่อยาใหม่", NEW_DRUGS_FILE),
                                          ("ตัวแปรร่วม", DATA / "covariates.csv"),
@@ -135,7 +136,10 @@ def tab_data():
         with col.container(border=True):
             st.markdown(f"**{label}**")
             st.caption(f"`data/{path.name}`")
-            st.write(("✅ " if path.exists() else "⚠️ ") + file_status(path))
+            if path.exists():
+                st.markdown(f":blue-badge[พร้อม] {file_status(path)}")
+            else:
+                st.markdown(":gray-badge[ยังไม่มีไฟล์]")
 
     if DRUGS_FILE.exists():
         try:
@@ -158,7 +162,7 @@ def tab_data():
 
 
 def upload_drugs():
-    st.subheader("อัปโหลดข้อมูลการใช้ยา")
+    st.markdown("#### อัปโหลดข้อมูลการใช้ยา")
     st.caption("รับไฟล์ CSV หรือ Excel เดือนเป็น พ.ศ. หรือ ค.ศ. ก็ได้ เดือนที่ไม่มีข้อมูลให้เว้นว่าง (ไม่ใส่ 0)")
     up = st.file_uploader("ไฟล์การใช้ยา", type=["csv", "xlsx", "xls"], key="up_drugs")
     if up is None:
@@ -233,7 +237,7 @@ def upload_drugs():
 
 
 def upload_new_drugs():
-    st.subheader("อัปโหลดรายชื่อยาใหม่ (การทดลอง 3)")
+    st.markdown("#### อัปโหลดรายชื่อยาใหม่ (การทดลอง 3)")
     up = st.file_uploader("ไฟล์รายชื่อยา", type=["csv", "xlsx", "xls", "txt"], key="up_new")
     if up is None:
         if NEW_DRUGS_FILE.exists():
@@ -289,7 +293,7 @@ def upload_simple(label: str, dest: Path, check):
 
 # ----------------------------------------------------------------- tab 2: run
 def tab_run():
-    st.subheader("ตั้งค่าการทดลอง")
+    st.markdown("#### ตั้งค่าการทดลอง")
     preset = st.selectbox("เริ่มจากค่าตั้งของ", list(PRESETS))
     with open(CONFIGS / PRESETS[preset], encoding="utf-8") as f:
         base = yaml.safe_load(f)
@@ -375,7 +379,7 @@ def tab_run():
     with st.expander("ดูค่าตั้งเป็น YAML (บันทึกไว้ใช้กับ run.py ได้)"):
         st.code(yaml.safe_dump(cfg_raw, allow_unicode=True, sort_keys=False), language="yaml")
 
-    if st.button("▶ รันการทดลอง", type="primary", disabled=bool(problems)):
+    if st.button("รันการทดลอง", type="primary", icon=":material/play_arrow:", disabled=bool(problems)):
         execute(cfg, int(max_drugs) or None)
 
 
@@ -401,7 +405,7 @@ def execute(cfg: dict, max_drugs):
             st.error(f"{type(e).__name__}: {e}")
             return
         status.update(label=f"เสร็จใน {out['log']['total_seconds']} วินาที", state="complete", expanded=False)
-    st.success(f"บันทึกผลไว้ที่ outputs/{Path(out['out_dir']).name} · ไปที่แท็บ 'ผลลัพธ์' เพื่อดูกราฟและดาวน์โหลด")
+    st.success(f"บันทึกผลไว้ที่ outputs/{Path(out['out_dir']).name} · ไปที่แท็บ “ผลลัพธ์” เพื่อดูกราฟและดาวน์โหลด")
     st.session_state["last_output"] = Path(out["out_dir"]).name
     if out["log"]["warnings"]:
         for w in out["log"]["warnings"]:
@@ -412,7 +416,7 @@ def execute(cfg: dict, max_drugs):
 def tab_results():
     dirs = list_outputs()
     if not dirs:
-        st.info("ยังไม่มีผลลัพธ์ รันการทดลองในแท็บ 'รันการทดลอง' ก่อน")
+        st.info("ยังไม่มีผลลัพธ์ รันการทดลองในแท็บ “รันการทดลอง” ก่อน")
         return
     names = [d.name for d in dirs]
     last = st.session_state.get("last_output")
@@ -431,7 +435,7 @@ def tab_results():
     for w in log.get("warnings", []):
         st.warning(w)
 
-    st.subheader("สรุปรวม")
+    st.markdown("#### สรุปรวม")
     show = overall.copy()
     show["covariate_setting"] = show["covariate_setting"].map(COV_TH).fillna(show["covariate_setting"])
     cols = ["covariate_setting", "context", "horizon", "n_rows"] + list(METRIC_TH)
@@ -441,7 +445,7 @@ def tab_results():
     metric = st.selectbox("ตัวชี้วัดในกราฟ", list(METRIC_TH), format_func=METRIC_TH.get)
     st.plotly_chart(overall_chart(overall, metric), width="stretch")
 
-    st.subheader("รายยา")
+    st.markdown("#### รายยา")
     drug = st.selectbox("เลือกยา", sorted(res[DRUG].unique()))
     contexts = sorted(res["context"].unique())
     context = st.radio("context", contexts, horizontal=True) if len(contexts) > 1 else contexts[0]
@@ -456,7 +460,7 @@ def tab_results():
     with st.expander("ตารางผลของยานี้"):
         st.dataframe(sub, width="stretch", hide_index=True)
 
-    st.subheader("ดาวน์โหลด")
+    st.markdown("#### ดาวน์โหลด")
     files = ["results_long.csv", "summary_per_drug.csv", "summary_overall.csv",
              "skipped_drugs.csv", "run_log.txt"]
     cols = st.columns(len(files) + 1)
@@ -468,8 +472,15 @@ def tab_results():
                              file_name=f"{folder.name}.xlsx", type="primary")
 
 
-def overall_chart(overall: pd.DataFrame, metric: str) -> go.Figure:
+def base_figure() -> go.Figure:
     fig = go.Figure()
+    fig.update_layout(font=dict(family="Sarabun, sans-serif", color="#1d2b3a", size=13),
+                      paper_bgcolor="#ffffff", plot_bgcolor="#ffffff")
+    return fig
+
+
+def overall_chart(overall: pd.DataFrame, metric: str) -> go.Figure:
+    fig = base_figure()
     for setting in ["no_cov", "with_cov"]:
         d = overall[overall["covariate_setting"] == setting]
         if d.empty:
@@ -478,15 +489,15 @@ def overall_chart(overall: pd.DataFrame, metric: str) -> go.Figure:
         fig.add_bar(x=x, y=d[metric], name=COV_TH[setting], marker_color=COLOR[setting],
                     marker_line_width=0, text=[f"{v:.3f}" for v in d[metric]], textposition="outside",
                     hovertemplate="%{x}<br>" + METRIC_TH[metric] + ": %{y:.3f}<extra>" + COV_TH[setting] + "</extra>")
-    fig.update_layout(barmode="group", bargap=0.35, bargroupgap=0.08, height=360, barcornerradius=4,
+    fig.update_layout(barmode="group", bargap=0.5, bargroupgap=0.08, height=360, barcornerradius=4,
                       margin=dict(l=10, r=10, t=30, b=10), yaxis_title=METRIC_TH[metric],
                       legend=dict(orientation="h", y=1.12, x=0))
-    fig.update_yaxes(rangemode="tozero", gridcolor="rgba(128,128,128,0.18)")
+    fig.update_yaxes(rangemode="tozero", gridcolor=GRID)
     return fig
 
 
 def drug_chart(sub: pd.DataFrame, history: pd.Series | None, drug: str) -> go.Figure:
-    fig = go.Figure()
+    fig = base_figure()
     if history is not None and len(sub):
         months = pd.to_datetime(sub["target_month"])
         h = history.loc[months.min() - pd.DateOffset(months=36): months.max()]
@@ -499,7 +510,7 @@ def drug_chart(sub: pd.DataFrame, history: pd.Series | None, drug: str) -> go.Fi
             continue
         x = pd.to_datetime(d["target_month"])
         fig.add_scatter(x=list(x) + list(x[::-1]), y=list(d["q0.9"]) + list(d["q0.1"][::-1]),
-                        fill="toself", fillcolor=BAND[setting], line=dict(width=0),
+                        fill="toself", fillcolor=BAND[setting], line=dict(width=0), mode="lines",
                         hoverinfo="skip", showlegend=False, name=f"ช่วง 80% {COV_TH[setting]}")
         fig.add_scatter(x=x, y=d["q0.5"], name=f"พยากรณ์ ({COV_TH[setting]})", mode="lines+markers",
                         line=dict(color=COLOR[setting], width=2), marker=dict(size=8),
@@ -509,8 +520,8 @@ def drug_chart(sub: pd.DataFrame, history: pd.Series | None, drug: str) -> go.Fi
     fig.update_layout(height=420, margin=dict(l=10, r=10, t=40, b=10), hovermode="x unified",
                       title=dict(text=f"{drug}: ค่าจริงเทียบค่าพยากรณ์ (แถบ = ช่วง q0.1–q0.9)", font_size=15),
                       legend=dict(orientation="h", y=-0.15, x=0), yaxis_title="ปริมาณ")
-    fig.update_yaxes(rangemode="tozero", gridcolor="rgba(128,128,128,0.18)")
-    fig.update_xaxes(gridcolor="rgba(128,128,128,0.10)")
+    fig.update_yaxes(rangemode="tozero", gridcolor=GRID)
+    fig.update_xaxes(gridcolor=GRID)
     return fig
 
 
@@ -528,9 +539,9 @@ def excel_bytes(folder: Path) -> bytes:
 
 
 # ----------------------------------------------------------------- page
-st.title("💊 พยากรณ์ความต้องการใช้ยารายเดือน")
+st.markdown("### พยากรณ์ความต้องการใช้ยารายเดือน")
 st.caption("Chronos-2 (amazon/chronos-2) แบบ zero-shot · ทดสอบแบบ rolling origin · รันบนเครื่องนี้ ข้อมูลไม่ถูกส่งออกไปภายนอก")
-t1, t2, t3 = st.tabs(["1 · ข้อมูล", "2 · รันการทดลอง", "3 · ผลลัพธ์"])
+t1, t2, t3 = st.tabs(["ข้อมูล", "รันการทดลอง", "ผลลัพธ์"])
 with t1:
     tab_data()
 with t2:

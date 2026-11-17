@@ -7,3 +7,19 @@ gatherUsageStats = false
 [server]
 headless = false
 maxUploadSize = 200
+
+# Plain blue theme
+[theme]
+base = "light"
+primaryColor = "#2a78d6"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f1f6fc"
+textColor = "#1d2b3a"
+linkColor = "#1f63b5"
+borderColor = "#d6e3f3"
+dataframeHeaderBackgroundColor = "#e8f1fb"
+showWidgetBorder = true
+baseRadius = "small"
+baseFontSize = 15
+font = "Sarabun:https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap, sans-serif"
+headingFont = "Sarabun:https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap, sans-serif"
